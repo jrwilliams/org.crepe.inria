@@ -1,0 +1,96 @@
+/**
+ * An adaptation of the standard phenotype2genotype.eol transformation that uses
+ * unique identifiers for every single meta-element.
+ * 
+ * Input models:
+ *		MOD - the ecore model being mapped
+ *		MM  - the ecore metamodel
+ *		FIN - container for automatically producing the finitisation model
+ * 		SEARCH - the container for creating Individuals
+ *
+ * @author James R. Williams
+ * @date 13th October, 2013
+ */
+var unassignedReferences;
+var instantiableClasses;
+var individual : SEARCH!Individual;
+var segmentObjectMap : Map; // <Segment, Object>
+var featureCollection;
+
+operation MOD!EObject toGenotype() : SEARCH!Individual {
+	individual = new SEARCH!Individual;
+	segmentObjectMap = new Map;
+	unassignedReferences = new Sequence;	
+	instantiableClasses = MM!EClass.all.select(c | not c.`abstract` and not c.interface).sortBy(c | c.name);
+	featureCollection = MM!EStructuralFeature.all; // May want to filter these?
+	
+	// Handle root 
+	var rootClass = getRootClass();
+	if (not rootClass.canIContainMyself()) {
+		instantiableClasses.remove(rootClass);
+	}
+
+	// 1. Map each object (ignoring the root object)
+	for (o in self.eAllContents()) {
+		if (o.isIgnored()) continue;
+		
+		individual.segments.add(o.toSegment());
+	}
+	
+	// 2. Handle references
+	for (ref in unassignedReferences) {
+		assignUnassignedP2GReference(ref);
+		delete ref;
+	}
+
+	return individual;
+}
+
+operation MOD!EObject toSegment() : SEARCH!Segment {
+	var segment = new SEARCH!Segment;
+	segmentObjectMap.put(segment, self);
+	
+	if (self.eClass.name == "EGenericType") "EGenericType".println();
+	if (self.eClass.name == "EAttribute") "EAttribute".println();
+	
+	// 1. Class bit
+	segment.classBit = determineClassBit(self.eClass);
+
+	// 2. Feature Pairs - Attributes	
+	for (attribute in self.eClass.eAllAttributes.select(a | not a.derived)) {
+		if (attribute.isIgnored()) continue;
+		if (not self.eIsSet(attribute)) continue;
+		
+		var features = self.eClass.eAllStructuralFeatures.select(f | not f.derived);
+		
+		// Create the feature pair. Offset the feature collection index by the number of instantiable classes to
+		// create unique ids. We don't care about feature values at this time (or didn't at ICSE: can add this back in if needed)
+		var fp = new SEARCH!FeaturePair;
+		fp.featureSelectorBit = features.indexOf(attribute) + instantiableClasses.size();
+		fp.featureValueBit = -1;
+		segment.featurePairs.add(fp);
+		
+	}
+	
+	// 3. Feature Pairs - References
+	for (reference in self.eClass.eAllReferences.select(r | not r.derived)) {
+		if (reference.isIgnored()) continue;
+
+		var features = self.eClass.eAllStructuralFeatures.select(f | not f.derived);
+		var featureSelectorBit = featureCollection.indexOf(reference) + instantiableClasses.size();
+		
+		// Create the feature pair. Again, we're not caring about the value of the reference		
+		var fp = new SEARCH!FeaturePair;
+		fp.featureSelectorBit = featureSelectorBit;
+		fp.featureValueBit = -1;
+		segment.featurePairs.add(fp);
+	}	
+	return segment;	
+}
+
+operation determineClassBit(eClass: Any) : Integer{
+	// Doesn't seem to match based on the objects (to do with how the resources have been loaded?) so matching
+	// on name and classifierId
+	var cl = instantiableClasses.selectOne(c|c.name==eClass.name and c.getClassifierId() == eClass.getClassifierId());
+	return instantiableClasses.indexOf(cl);
+}

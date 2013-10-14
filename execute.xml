@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<project basedir="." default="main">
+			
+	<property name="metamodel-directory" value="test-models"/>
+	<property name="output-file" value="/Users/jimmy/Documents/Projects/crepe/org.crepe.inria/test-models/results.txt"/>
+	
+	<!-- load required libraries -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+	  	<classpath>
+	    	<pathelement location="crepe/dependencies/ant-contrib-0.6.jar"/>
+		</classpath>
+	</taskdef>
+	
+	<target name="main">
+		<foreach target="execute" param="theModel">
+	    	<fileset dir="${metamodel-directory}" casesensitive="yes">
+	      		<include name="**/*.ecore"/>
+	    	</fileset>
+	  	</foreach>
+	</target>
+	
+	<target name="execute">
+		<!-- Need to register all metamodels. -->
+		<epsilon.emf.register file="crepe/metamodels/population.ecore"/>
+		<epsilon.emf.register file="crepe/metamodels/search.ecore"/>
+		<epsilon.emf.register file="crepe/metamodels/finitisation.ecore"/>
+
+		<!-- Load the Ecore metamodel. -->
+		<epsilon.emf.loadRegisteredMetamodel name="MM" 
+			metamodeluri="http://www.eclipse.org/emf/2002/Ecore"/>
+		
+		<!-- Utility model: used for Crepe mapping. Automatically created. Not stored. -->
+		<epsilon.emf.loadModel name="FIN"
+	    	modelFile="fin.model"
+	        metamodelUri="Finitisation"
+	        read="false" store="false"/>
+	    
+		<!-- Utility model: used for Crepe mapping. Not stored. -->
+	 	<epsilon.emf.loadModel name="SEARCH"
+	    	modelFile="search.model"
+	        metamodeluri="http://jw.research.crepe/search"
+	        read="false" store="false"/>
+
+		<!-- Load the model of interest. -->
+	  	<epsilon.emf.loadModel name="MOD"
+    	modelFile="${theModel}"
+        metamodelUri="http://www.eclipse.org/emf/2002/Ecore"
+        read="true" store="false" expand="true"/>
+		
+		<!-- Execute script. -->
+		<epsilon.eol src="mapper.eol" taskname="Crepe mapper">
+		    <model ref="MM"/>
+    		<model ref="MOD"/>
+    		<model ref="FIN"/>
+    		<model ref="SEARCH"/>
+			<parameter name="logLocation" value="${output-file}"/>
+		</epsilon.eol> 
+	</target>
+
+</project>

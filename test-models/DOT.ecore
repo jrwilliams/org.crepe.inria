@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="DOT" nsURI="dot" nsPrefix="dot">
+  <eClassifiers xsi:type="ecore:EClass" name="Label" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" ordered="false"
+        eType="#//GraphElement" eOpposite="#//GraphElement/label"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SimpleLabel" eSuperTypes="#//Label">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="content" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComplexLabel" eSuperTypes="#//Label">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="compartments" lowerBound="1"
+        upperBound="-1" eType="#//Compartment" containment="true" eOpposite="#//Compartment/complexLabel"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Compartment" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="complexLabel" ordered="false"
+        eType="#//ComplexLabel" eOpposite="#//ComplexLabel/compartments"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="compartments" ordered="false"
+        eType="#//Compartment" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="anchor" ordered="false"
+        eType="#//Anchor" eOpposite="#//Anchor/source"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VerticalCompartment" eSuperTypes="#//Compartment"/>
+  <eClassifiers xsi:type="ecore:EClass" name="HorizontalCompartment" eSuperTypes="#//Compartment"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SimpleCompartment" eSuperTypes="#//Compartment">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="content" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Anchor">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" ordered="false" unique="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" ordered="false"
+        eType="#//Compartment" eOpposite="#//Compartment/anchor"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GraphElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" ordered="false" unique="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="label" ordered="false"
+        eType="#//Label" containment="true" eOpposite="#//Label/element"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="style" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Graph" eSuperTypes="#//GraphElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" ordered="false" unique="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rankDir" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="labeljust" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="labelloc" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="concentrate" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="#//Nodelike" containment="true" eOpposite="#//Nodelike/graph"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="boundingBox" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="compound" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="layers" ordered="false"
+        upperBound="-1" eType="#//Layer" containment="true" eOpposite="#//Layer/graph"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nodeSeparation" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ordering" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" ordered="false" unique="false"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ratio" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="center" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Layer" eSuperTypes="#//GraphElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" ordered="false"
+        upperBound="-1" eType="#//Nodelike" eOpposite="#//Nodelike/layers"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arcs" ordered="false" upperBound="-1"
+        eType="#//Arc" eOpposite="#//Arc/layers"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="graph" ordered="false"
+        lowerBound="1" eType="#//Graph" eOpposite="#//Graph/layers"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="layerSeparator" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Nodelike" abstract="true" eSuperTypes="#//GraphElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="owner" ordered="false"
+        eType="#//SubGraph" eOpposite="#//SubGraph/nodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refers" ordered="false"
+        upperBound="-1" eType="#//Arc" eOpposite="#//Arc/fromNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referredBy" ordered="false"
+        upperBound="-1" eType="#//Arc" eOpposite="#//Arc/toNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="graph" ordered="false"
+        eType="#//Graph" eOpposite="#//Graph/nodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="layers" ordered="false"
+        upperBound="-1" eType="#//Layer" eOpposite="#//Layer/nodes"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SubGraph" eSuperTypes="#//Nodelike">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="#//Nodelike" containment="true" eOpposite="#//Nodelike/owner"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="labelloc" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Node" eSuperTypes="#//Nodelike">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedSize" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fontname" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fontsize" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="shape" ordered="false"
+        eType="#//NodeShape" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Arc" abstract="true" eSuperTypes="#//GraphElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fromNode" ordered="false"
+        lowerBound="1" eType="#//Nodelike" eOpposite="#//Nodelike/refers"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="toNode" ordered="false"
+        lowerBound="1" eType="#//Nodelike" eOpposite="#//Nodelike/referredBy"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="layers" ordered="false"
+        upperBound="-1" eType="#//Layer" eOpposite="#//Layer/arcs"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="constraint" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="group" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="minlen" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sameHead" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sameTail" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lhead" ordered="false"
+        eType="#//Nodelike"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ltail" ordered="false"
+        eType="#//Nodelike"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="decorate" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DirectedArc" eSuperTypes="#//Arc">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arrowHead" ordered="false"
+        eType="#//ArrowShape" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="headlabel" ordered="false"
+        eType="#//Label"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="taillabel" ordered="false"
+        eType="#//Label"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arrowTail" ordered="false"
+        eType="#//ArrowShape" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="tail_lp" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="head_lp" ordered="false"
+        unique="false" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UndirectedArc" eSuperTypes="#//Arc"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Shape" abstract="true" eSuperTypes="#//GraphElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="peripheries" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NodeShape" abstract="true" eSuperTypes="#//Shape"/>
+  <eClassifiers xsi:type="ecore:EClass" name="SimpleNodeShape" eSuperTypes="#//NodeShape"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PointNodeShape" eSuperTypes="#//NodeShape"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComplexNodeShape" abstract="true" eSuperTypes="#//NodeShape"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PolygonNodeShape" eSuperTypes="#//ComplexNodeShape">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sides" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="skew" ordered="false" unique="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="distortion" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isRegular" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="orientation" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MNodeShape" eSuperTypes="#//ComplexNodeShape">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="toplabel" ordered="false"
+        eType="#//Label" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bottomlabel" ordered="false"
+        eType="#//Label" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RecordNodeShape" eSuperTypes="#//ComplexNodeShape"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ArrowShape" eSuperTypes="#//Shape">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="clipping" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isPlain" ordered="false"
+        unique="false" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" ordered="false" unique="false"
+        lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+</ecore:EPackage>

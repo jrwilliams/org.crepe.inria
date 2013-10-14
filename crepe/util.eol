@@ -1,0 +1,53 @@
+/**
+ * An adaptation of the standard Crepe utility functions. Cut down to only include those
+ * necessary for the pattern matching.
+ *
+ * @author James R. Williams
+ * @date 13th October, 2013
+ */
+ 
+/**
+ * Grabs the set of instantiable classes. Rules out those who are abstract,
+ * interfaces, ignored, children of ignored classes
+ */
+operation getInstantiableClasses() : Sequence {
+	var instantiable = new Sequence;
+
+	// Get all classes that are not abstract or interfaces
+	var cs = MM!EClass.all.select(c | not c.`abstract` and not c.interface).sortBy(c | c.name);
+	
+	// We only want those referenceable (directly or not) by the root
+	var rootClass = getRootClass();
+	
+	// Now find the ignoreds
+	for (c in cs) {
+		if (not c.isIgnored() and not c.isAncestorIgnored()) {
+			instantiable.add(c);
+		}
+	}
+	
+	return instantiable.asSequence();
+}
+
+/**
+ * Determines whether the objects conforming to the root class are allowed to be instantiated.
+ */
+operation MM!EClass canIContainMyself() {
+	for (r in self.eAllReferences) {
+		if (r.eType == self and r.containment) {
+			return true;
+		}
+	}
+
+	for (c in self.eAllContents()) {
+		if (c.isTypeOf(MM!EClass)) {
+			for (r in c.eAllReferences) {
+				if (r.eType == self and r.containment) {
+					return true;
+				}
+			}
+		}		
+
+	}
+	return false; // Oh no, I simply can't!
+}

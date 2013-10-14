@@ -1,0 +1,120 @@
+/**
+ * A script to map an Ecore metamodel down to its canonical form and print
+ * the result as a string suitable for pattern detection.
+ *
+ * Input parameters:
+ *		logLocation - path to the file to store the result
+ * Input models:
+ *		MOD - the ecore model being mapped
+ *		MM  - the ecore metamodel
+ *		FIN - container for automatically producing the finitisation model
+ * 		SEARCH - the container for creating Individuals
+ *
+ * @author James R. Williams
+ * @date 13th October, 2013
+ */
+import 'crepe/util.eol';
+import 'crepe/finitisationUtil.eol';
+import 'crepe/phenotype2genotype.eol';
+
+// Required variables for mapping
+var random = new Native('java.util.Random');
+var instantiableClasses;
+var unassignedReferences;
+var modelObjects;
+var featureFeaturePairMap;
+var individual : SEARCH!Individual;
+var segmentObjectMap : Map; // <Segment, Object>
+var featureCollection;
+
+// Create the finitisation model used by the mapping process
+setupFinitisationModel();
+for (ig in FIN!MetamodelFinitisation.all.first().ignores) ig.println();
+
+// Print meta-element identification
+// printMetaElementIdentifiers();
+
+// Now map!
+var genotype = MOD.getResource().getContents().first().toGenotype();
+
+// Output			
+var fw = new Native('java.io.FileWriter')(logLocation, true);
+var out = new Native('java.io.BufferedWriter')(fw);
+out.write(MOD.getResource().getContents().first().name + ": ");
+out.write(genotype.toString());
+out.newLine();
+out.flush();
+out.close();
+
+/**
+ * Print the genotype as wanted by the pattern matching tool.
+ */
+operation SEARCH!Individual toString() {
+	var r = "";//"[";
+	for (seg in self.segments.sortBy(segg | segg.classBit)) {
+		r = r + " " + seg.classBit;
+		r = r + " :"; // Marker to segregate class and feature bits
+		for (fp in seg.featurePairs.sortBy(fpp | fpp.featureSelectorBit)) {
+			r = r + " " + fp.featureSelectorBit;
+		}
+		r = r + " ] "; // Marker to highlight the end of the segment
+	}
+	return r;
+}
+
+/**
+ * Automatically extract the finitisation information from the metamodel.
+ */
+operation setupFinitisationModel() {
+	var fin = new FIN!MetamodelFinitisation;
+
+	// Set root
+	fin.rootObject = MM!EClass.all.selectOne(c|c.name=="EPackage");
+	
+	// Define the set of meta-elements that should be ignored by the mapping.
+	var eClassesToIgnore = Sequence{"EAnnotation", "EAttribute", "EGenericType"};
+	var eSfsToIgnore = Sequence{"eGenericType", "ePackage"};
+	
+	for (n in eClassesToIgnore) {
+		var cl = MM!EClass.all.selectOne(c | c.name == n);
+		if (cl.isDefined()) fin.ignores.add(cl);
+	}
+	for (n in eSfsToIgnore) {
+		var sf = MM!EStructuralFeature.all.selectOne(sf|sf.name == n);
+		if (sf.isDefined()) fin.ignores.add(sf);
+	}
+	
+	// Extract the datatype finitisations
+	// Strings:
+	var strs = MOD!ENamedElement.all.collect(n | n.name).asSet();
+	var strFin = new FIN!DataTypeListFinitisation;
+	strFin.javaTypeName = "java.lang.String";
+	strFin.list.addAll(strs);
+	fin.finitisations.add(strFin);
+	
+	// Integers:
+	var intFin = new FIN!DataTypeListFinitisation;
+	intFin.javaTypeName = "int";
+	intFin.list.addAll(Sequence{-1..2000});
+	fin.finitisations.add(intFin);
+	
+	var intObjFin = new FIN!DataTypeListFinitisation;
+	intObjFin.javaTypeName = "java.lang.Integer";
+	intObjFin.list.addAll(Sequence{-1..2000});
+	fin.finitisations.add(intObjFin);
+}
+
+/**
+ * Print summary of meta-element identifiers.
+ */
+operation printMetaElementIdentifiers() {
+	var instantiableClasses = MM!EClass.all.select(c | not c.`abstract` and not c.interface).sortBy(c | c.name);
+	var featureCollection = MM!EStructuralFeature.all; // TODO: May want to filter these?
+	
+	for (cl in instantiableClasses) {
+		("[" + instantiableClasses.indexOf(cl) + "] : \t" + cl.name).println();
+	}
+	for (sf in featureCollection) {
+		("[" + (featureCollection.indexOf(sf) + instantiableClasses.size()) + "] : \t" + sf.name).println();
+	}
+}
